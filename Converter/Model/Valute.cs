@@ -4,19 +4,39 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Net.Http;
+using Newtonsoft.Json;
 
 namespace Converter.Model
 {
-    public partial class SBR
+    public  class CBRDaily
     {
         public DateTimeOffset Date { get; set; }
         public DateTimeOffset PreviousDate { get; set; }
         public string PreviousUrl { get; set; }
         public DateTimeOffset Timestamp { get; set; }
         public Dictionary<string, Valute> Valute { get; set; }
+
+        public CBRDaily GetValutes()
+        { 
+            var requestUri = "https://www.cbr-xml-daily.ru/daily_json.js";
+
+            string json = String.Empty;
+            using (var client = new HttpClient())
+            {
+                var response = client.GetAsync(requestUri).GetAwaiter().GetResult();
+                if (response.IsSuccessStatusCode)
+                {
+                    json = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                }
+            }
+            var valutes = JsonConvert.DeserializeObject<CBRDaily>(json);
+            valutes.Valute.Add("RUB", new Valute { Name = "Российский рубль", Value = 1, Nominal = 1 });
+            return valutes;
+        }
     }
 
-    public partial class Valute
+    public  class Valute
     {
         public string Id { get; set; }
         public string NumCode { get; set; }

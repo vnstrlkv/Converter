@@ -13,28 +13,28 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Converter.ViewModel;
-using Converter.View;
 
-// Документацию по шаблону элемента "Пустая страница" см. по адресу https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x419
+// Документацию по шаблону элемента "Пустая страница" см. по адресу https://go.microsoft.com/fwlink/?LinkId=234238
 
 namespace Converter.View
 {
     /// <summary>
     /// Пустая страница, которую можно использовать саму по себе или для перехода внутри фрейма.
     /// </summary>
-    public sealed partial class MainPage : Page
+    public sealed partial class ExchangePage : Page
     {
-        public ExchangeRateVM ViewModel;
-        public MainPage()
+        public ExchangePage()
         {
             this.InitializeComponent();
-            this.ViewModel = new ExchangeRateVM();
-            this.DataContext = new ExchangeRateVM();
+           
         }
 
-        private void HyperlinkButton_Click(object sender, RoutedEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-           this.Frame.Navigate(typeof(ExchangePage), DataContext);           
+            if (e.Parameter != null)
+            {
+                DataContext = e.Parameter;
+            }
         }
     }
 }

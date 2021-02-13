@@ -3,48 +3,106 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Net.Http;
 using Converter.Model;
-using Newtonsoft.Json;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace Converter.ViewModel
 {
-    public class ExchangeRateVM
+    public class ExchangeRateVM : INotifyPropertyChanged
     {
-        private Dictionary<string,Valute> valutes;
-        private List<string> test;
-        void GetExchange()
-        {
-            var requestUri = "https://www.cbr-xml-daily.ru/daily_json.js";
+        private CBRDaily allValutes;
+        private Exchange leftExchange;
+        private Exchange rightExchange;
+        private double leftMoney;
+        private double rightMoney;
+        private bool flag;
 
-            string json = String.Empty;
-            using (var client = new HttpClient())
+        public Exchange LeftExchange
+        {
+            get
             {
-                var response = client.GetAsync(requestUri).GetAwaiter().GetResult();
-                if (response.IsSuccessStatusCode)
-                {
-                    json = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-                }
+                return leftExchange;
             }
-
-            var deserialized = JsonConvert.DeserializeObject<SBR>(json);
-
-            valutes = deserialized.Valute;
-            
+            set
+            {
+                leftExchange = value;
+                OnPropertyChanged("LeftExchange");
+            }
         }
-       public List<string> Test
+
+        public Exchange RightExchange
         {
-            get { return new List<string>() { "123", "12424" }; }
-            set { test = value; }            
+            get
+            {
+                return rightExchange;
+            }
+            set
+            {
+                rightExchange = value;
+                OnPropertyChanged("RightExchange");
+            }
         }
 
+        public double LeftMoney
+        {
+            get {             
+                return leftMoney;
+                }
 
+            set { 
+                LeftExchange.Amount = value;
+                leftMoney = value;
+                if (rightExchange.Amount != 0)
+                {
+                    // leftMoney = LeftExchange.Amount;
+                    RightMoney = (LeftExchange.Amount) * (LeftExchange.Rate * LeftExchange.Nominal) / (RightExchange.Rate * RightExchange.Nominal);
+                }
+                else LeftMoney = 0;
+                OnPropertyChanged("LeftMoney");
+                }
+        }
+
+        public double RightMoney
+        {
+            get
+            {             
+                return rightMoney;
+            }
+            set {
+                RightExchange.Amount = value;
+                rightMoney = value;
+                if (leftExchange.Amount != 0)
+                {
+                   // LeftMoney = (LeftExchange.Amount) * (LeftExchange.Rate * LeftExchange.Nominal) / (RightExchange.Rate * RightExchange.Nominal);
+                }
+                else RightMoney = 0;               
+                OnPropertyChanged("RightMoney"); 
+                }
+        }
 
         public ExchangeRateVM()
         {
-            GetExchange();
+            allValutes = new CBRDaily();
+            allValutes = allValutes.GetValutes();
+            
+                        
+            leftExchange = new Exchange { Amount = 1, Name = Valutes["RUB"].Name, Rate = Valutes["RUB"].Value, Nominal = Valutes["RUB"].Nominal };
+            rightExchange = new Exchange { Amount = 1, Name = Valutes["USD"].Name, Rate = Valutes["USD"].Value, Nominal = Valutes["USD"].Nominal };
         }
 
+        public Dictionary<string, Valute> Valutes
+            {
+                get { return allValutes.Valute; }            
+            }
 
+
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged([CallerMemberName] string prop = "")
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(prop));
+        }
     }
 }
