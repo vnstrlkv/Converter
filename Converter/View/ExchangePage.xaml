@@ -4,21 +4,22 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:local="using:Converter.Helpers"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <ListBox>
-            <ListBox ItemsSource="{Binding Valutes}">
-
-                <ListBox.ItemTemplate>
+        <ListView x:Name="ListValutes" DataContext="{x:Bind ViewModel}" ItemsSource="{Binding Valutes.Values}" 
+                  SelectedItem="{x:Bind ViewModel.SelectedValute, Mode=TwoWay}" 
+                  IsItemClickEnabled="True" ItemClick="ListView_ItemClick">
+                <ListView.ItemTemplate>
                     <DataTemplate >
-                        <StackPanel Margin="5">
-                            <TextBlock FontSize="18" Text="{Binding Key}"/>
-                        </StackPanel>
+                        
+                            <TextBlock FontSize="15" Text="{Binding CharCode}"/>
+                            
                     </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-        </ListBox>
+                </ListView.ItemTemplate>
+            </ListView>
+      
     </Grid>
 </Page>

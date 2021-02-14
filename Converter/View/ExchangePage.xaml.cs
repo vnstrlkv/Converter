@@ -23,18 +23,25 @@ namespace Converter.View
     /// </summary>
     public sealed partial class ExchangePage : Page
     {
+        public ExchangeRateVM ViewModel;
         public ExchangePage()
         {
             this.InitializeComponent();
-           
         }
+
+
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             if (e.Parameter != null)
             {
-                DataContext = e.Parameter;
+                ViewModel =(ExchangeRateVM) e.Parameter;
             }
+        }
+
+        private void ListView_ItemClick(object sender, ItemClickEventArgs e)
+        {          
+            this.Frame.Navigate(typeof(MainPage), ViewModel);
         }
     }
 }

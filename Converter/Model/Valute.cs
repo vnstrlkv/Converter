@@ -31,7 +31,7 @@ namespace Converter.Model
                 }
             }
             var valutes = JsonConvert.DeserializeObject<CBRDaily>(json);
-            valutes.Valute.Add("RUB", new Valute { Name = "Российский рубль", Value = 1, Nominal = 1 });
+            valutes.Valute.Add("RUB", new Valute { Name = "Российский рубль", Value = 1, Nominal = 1, CharCode="RUB"});
             return valutes;
         }
     }

@@ -4,8 +4,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:local="using:Converter.Helpers"
     mc:Ignorable="d">
-    
+    <Page.Resources>
+        <local:DoubleFormatter x:Key="DoubleFormatter" />
+    </Page.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -19,17 +22,19 @@
             <RowDefinition/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <TextBox Grid.Column="0" Grid.Row="0" FontSize="18" Text="{x:Bind ViewModel.LeftMoney, Mode=TwoWay}" />
-        <TextBox Grid.Column="2" Grid.Row="0" FontSize="18" Text="{x:Bind ViewModel.RightMoney, Mode=TwoWay}"/>
+        <TextBox Grid.Column="0" Grid.Row="0" FontSize="18"  Text="{x:Bind ViewModel.LeftMoney, Mode=TwoWay, Converter={StaticResource DoubleFormatter}}"/>
+        <TextBox Grid.Column="2" Grid.Row="0" FontSize="18"  Text="{x:Bind ViewModel.RightMoney, Mode=TwoWay, Converter={StaticResource DoubleFormatter}}"/>
 
         <TextBlock Grid.Column="0" Grid.Row="1" FontSize="18" Text="{x:Bind ViewModel.LeftExchange.Name, Mode=TwoWay}"/>
         <TextBlock Grid.Column="2" Grid.Row="1" FontSize="18" Text="{x:Bind ViewModel.RightExchange.Name, Mode=TwoWay}"/>
 
-        <HyperlinkButton Grid.Column="0" Grid.Row="2" Content="Click to go to page 2"
+        <HyperlinkButton Grid.Column="0" Grid.Row="2" Content="Сменить валюту"
                  Click="HyperlinkButton_Click"
+                 Command="{x:Bind ViewModel.LeftClickCommand}"
                  HorizontalAlignment="Center"/>
-        <HyperlinkButton Grid.Column="2" Grid.Row="2" Content="Click to go to page 2"
+        <HyperlinkButton Grid.Column="2" Grid.Row="2" Content="Сменить валюту"
                  Click="HyperlinkButton_Click"
+                 Command="{x:Bind ViewModel.RightClickCommand}"
                  HorizontalAlignment="Center"/>
         
         

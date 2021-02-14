@@ -119,6 +119,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\DoubleFormatter.cs" />
+    <Compile Include="Helpers\ExchangeFormatter.cs" />
+    <Compile Include="Helpers\RelayCommand.cs" />
     <Compile Include="Model\Exchange.cs" />
     <Compile Include="Model\Valute.cs" />
     <Compile Include="ViewModel\ExchangeRateVM.cs" />

@@ -29,12 +29,23 @@ namespace Converter.View
         {
             this.InitializeComponent();
             this.ViewModel = new ExchangeRateVM();
-            this.DataContext = new ExchangeRateVM();
+
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            if (e.Parameter != null)
+            {
+                if(e.Parameter is ExchangeRateVM)
+                ViewModel = (ExchangeRateVM)e.Parameter;
+            }
         }
 
         private void HyperlinkButton_Click(object sender, RoutedEventArgs e)
         {
-           this.Frame.Navigate(typeof(ExchangePage), DataContext);           
+           this.Frame.Navigate(typeof(ExchangePage), ViewModel);           
         }
+
+
     }
 }

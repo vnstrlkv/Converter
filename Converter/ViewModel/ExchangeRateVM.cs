@@ -4,8 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Converter.Model;
+using Converter.Helpers;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows.Input;
 
 namespace Converter.ViewModel
 {
@@ -17,6 +19,36 @@ namespace Converter.ViewModel
         private double leftMoney;
         private double rightMoney;
         private bool flag;
+        private Valute selectedValute;
+        private string leftOrRight;
+        public ICommand LeftClickCommand;
+        public ICommand RightClickCommand;
+
+        public ExchangeRateVM()
+        {
+            allValutes = new CBRDaily();
+            allValutes = allValutes.GetValutes();
+            flag = true;
+            leftOrRight = "";
+
+            LeftClickCommand= new RelayCommand(() =>
+            {
+               
+                leftOrRight = "L";
+            });
+            RightClickCommand = new RelayCommand(() =>
+            {
+                
+                    leftOrRight = "R";
+            });
+
+            leftExchange = new Exchange { Amount = 1, Name = Valutes["RUB"].Name, Rate = Valutes["RUB"].Value, Nominal = Valutes["RUB"].Nominal };
+            rightExchange = new Exchange { Amount = 1, Name = Valutes["USD"].Name, Rate = Valutes["USD"].Value, Nominal = Valutes["USD"].Nominal };
+
+
+        }
+
+
 
         public Exchange LeftExchange
         {
@@ -47,56 +79,86 @@ namespace Converter.ViewModel
         public double LeftMoney
         {
             get {             
-                return leftMoney;
+                return Math.Round(leftMoney);
                 }
 
-            set { 
-                LeftExchange.Amount = value;
-                leftMoney = value;
-                if (rightExchange.Amount != 0)
-                {
-                    // leftMoney = LeftExchange.Amount;
-                    RightMoney = (LeftExchange.Amount) * (LeftExchange.Rate * LeftExchange.Nominal) / (RightExchange.Rate * RightExchange.Nominal);
-                }
-                else LeftMoney = 0;
-                OnPropertyChanged("LeftMoney");
-                }
+            set {
+              
+                    LeftExchange.Amount = value;
+                    leftMoney = value;
+                    if (flag)
+                    {
+                        flag = false;
+                        RightMoney = (LeftExchange.Amount) * (LeftExchange.Rate / LeftExchange.Nominal) / (RightExchange.Rate / RightExchange.Nominal);
+                        flag = true;
+                    }
+                    OnPropertyChanged("LeftMoney");
+                
+            }
         }
 
         public double RightMoney
         {
             get
             {             
-                return rightMoney;
+                return Math.Round(rightMoney,3);
             }
-            set {
-                RightExchange.Amount = value;
-                rightMoney = value;
-                if (leftExchange.Amount != 0)
+            set
+            {
+              
+                   
+                    RightExchange.Amount = value;
+                    rightMoney = value;
+                if (flag)
                 {
-                   // LeftMoney = (LeftExchange.Amount) * (LeftExchange.Rate * LeftExchange.Nominal) / (RightExchange.Rate * RightExchange.Nominal);
-                }
-                else RightMoney = 0;               
-                OnPropertyChanged("RightMoney"); 
-                }
-        }
-
-        public ExchangeRateVM()
-        {
-            allValutes = new CBRDaily();
-            allValutes = allValutes.GetValutes();
-            
+                    flag = false;                   
                         
-            leftExchange = new Exchange { Amount = 1, Name = Valutes["RUB"].Name, Rate = Valutes["RUB"].Value, Nominal = Valutes["RUB"].Nominal };
-            rightExchange = new Exchange { Amount = 1, Name = Valutes["USD"].Name, Rate = Valutes["USD"].Value, Nominal = Valutes["USD"].Nominal };
+                    LeftMoney = (RightExchange.Amount) *  (RightExchange.Rate / RightExchange.Nominal)/ (LeftExchange.Rate / LeftExchange.Nominal);  
+                    
+                    flag = true;
+                }
+                OnPropertyChanged("RightMoney");
+            }
         }
 
+        public Valute SelectedValute
+        {
+            get
+            {
+                return selectedValute;
+            }
+            set
+            {
+                selectedValute = value;  
+                if(LeftOrRight=="L")
+                {
+                    LeftExchange.Name = selectedValute.Name;
+                    LeftExchange.Nominal = SelectedValute.Nominal;
+                    LeftExchange.Rate = SelectedValute.Value;
+                    LeftMoney=LeftMoney;
+                }
+                else if(LeftOrRight=="R")
+                {
+                    RightExchange.Name = selectedValute.Name;
+                    RightExchange.Nominal = SelectedValute.Nominal;
+                    RightExchange.Rate = SelectedValute.Value;
+                    RightMoney = RightMoney;
+                    
+                }
+                selectedValute = null;
+            }
+        }
+        
         public Dictionary<string, Valute> Valutes
             {
                 get { return allValutes.Valute; }            
             }
 
-
+        public string LeftOrRight
+        {
+            get { return leftOrRight; }
+        }
+        
 
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged([CallerMemberName] string prop = "")
