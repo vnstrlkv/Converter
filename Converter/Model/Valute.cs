@@ -17,17 +17,17 @@ namespace Converter.Model
         public DateTimeOffset Timestamp { get; set; }
         public Dictionary<string, Valute> Valute { get; set; }
 
-        public CBRDaily GetValutes()
+       async public Task<CBRDaily> GetValutes()
         { 
             var requestUri = "https://www.cbr-xml-daily.ru/daily_json.js";
 
             string json = String.Empty;
             using (var client = new HttpClient())
             {
-                var response = client.GetAsync(requestUri).GetAwaiter().GetResult();
+                var response = await client.GetAsync(requestUri);
                 if (response.IsSuccessStatusCode)
                 {
-                    json = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                    json = await response.Content.ReadAsStringAsync();
                 }
             }
             var valutes = JsonConvert.DeserializeObject<CBRDaily>(json);

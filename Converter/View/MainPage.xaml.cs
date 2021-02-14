@@ -28,7 +28,7 @@ namespace Converter.View
         public MainPage()
         {
             this.InitializeComponent();
-            this.ViewModel = new ExchangeRateVM();
+           
 
         }
 

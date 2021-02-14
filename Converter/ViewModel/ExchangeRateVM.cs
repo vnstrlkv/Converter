@@ -23,31 +23,39 @@ namespace Converter.ViewModel
         private string leftOrRight;
         public ICommand LeftClickCommand;
         public ICommand RightClickCommand;
-
-        public ExchangeRateVM()
+        public static async Task<ExchangeRateVM> Create()
         {
+            var myClass = new ExchangeRateVM();
+            await myClass.Initialize();
+            return myClass;
+        }
+        private ExchangeRateVM()
+        {
+           
+        }
+        private async Task Initialize()
+        {
+            await Task.Delay(3000); // Do whatever asynchronous work you need to do
             allValutes = new CBRDaily();
-            allValutes = allValutes.GetValutes();
+            allValutes = await allValutes.GetValutes();
             flag = true;
             leftOrRight = "";
 
-            LeftClickCommand= new RelayCommand(() =>
+            LeftClickCommand = new RelayCommand(() =>
             {
-               
+
                 leftOrRight = "L";
             });
             RightClickCommand = new RelayCommand(() =>
             {
-                
-                    leftOrRight = "R";
+
+                leftOrRight = "R";
             });
 
             leftExchange = new Exchange { Amount = 1, Name = Valutes["RUB"].Name, Rate = Valutes["RUB"].Value, Nominal = Valutes["RUB"].Nominal };
             rightExchange = new Exchange { Amount = 1, Name = Valutes["USD"].Name, Rate = Valutes["USD"].Value, Nominal = Valutes["USD"].Nominal };
 
-
         }
-
 
 
         public Exchange LeftExchange

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Converter.View;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -39,38 +40,14 @@ namespace Converter
         /// <param name="e">Сведения о запросе и обработке запуска.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
-            Frame rootFrame = Window.Current.Content as Frame;
-
-            // Не повторяйте инициализацию приложения, если в окне уже имеется содержимое,
-            // только обеспечьте активность окна
-            if (rootFrame == null)
+            if (e.PreviousExecutionState != ApplicationExecutionState.Running)
             {
-                // Создание фрейма, который станет контекстом навигации, и переход к первой странице
-                rootFrame = new Frame();
-
-                rootFrame.NavigationFailed += OnNavigationFailed;
-
-                if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
-                {
-                    //TODO: Загрузить состояние из ранее приостановленного приложения
-                }
-
-                // Размещение фрейма в текущем окне
-                Window.Current.Content = rootFrame;
+                bool loadState = (e.PreviousExecutionState == ApplicationExecutionState.Terminated);
+                ExtendedSplash extendedSplash = new ExtendedSplash(e.SplashScreen, loadState);
+                Window.Current.Content = extendedSplash;
             }
 
-            if (e.PrelaunchActivated == false)
-            {
-                if (rootFrame.Content == null)
-                {
-                    // Если стек навигации не восстанавливается для перехода к первой странице,
-                    // настройка новой страницы путем передачи необходимой информации в качестве параметра
-                    // навигации
-                    rootFrame.Navigate(typeof(View.MainPage), e.Arguments);
-                }
-                // Обеспечение активности текущего окна
-                Window.Current.Activate();
-            }
+            Window.Current.Activate();
         }
 
         /// <summary>

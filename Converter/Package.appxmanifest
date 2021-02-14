@@ -3,7 +3,7 @@
 <Package
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
   xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
-  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" 
   IgnorableNamespaces="uap mp">
 
   <Identity
@@ -38,7 +38,7 @@
         Description="Converter"
         BackgroundColor="transparent">
         <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png"/>
-        <uap:SplashScreen Image="Assets\SplashScreen.png" />
+        <uap:SplashScreen Image="Assets\SplashScreen.png" BackgroundColor="#00B2F0"/>
       </uap:VisualElements>
     </Application>
   </Applications>

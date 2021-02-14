@@ -6,17 +6,32 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local="using:Converter.Helpers"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="{StaticResource BlueBrush}">
 
     <Grid>
-        <ListView x:Name="ListValutes" DataContext="{x:Bind ViewModel}" ItemsSource="{Binding Valutes.Values}" 
+        <ListView HorizontalAlignment="Center"
+                  
+                  Width="Auto"
+                  x:Name="ListValutes" 
+                  DataContext="{x:Bind ViewModel}" 
+                  ItemsSource="{Binding Valutes.Values}" 
                   SelectedItem="{x:Bind ViewModel.SelectedValute, Mode=TwoWay}" 
                   IsItemClickEnabled="True" ItemClick="ListView_ItemClick">
                 <ListView.ItemTemplate>
-                    <DataTemplate >
-                        
-                            <TextBlock FontSize="15" Text="{Binding CharCode}"/>
-                            
+                    <DataTemplate>
+                    <RelativePanel 
+                        BorderBrush="BurlyWood"
+                        BorderThickness="3">
+                        <TextBlock x:Name="ValuteName" Width="100"  TextWrapping="Wrap" 
+                                   RelativePanel.AlignTopWithPanel="True"
+                                   RelativePanel.AlignLeftWithPanel="True"
+                                   FontSize="15" Text="{Binding Name}"/>
+                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Width="70"
+                                   RelativePanel.AlignTopWithPanel="True"
+                                   RelativePanel.RightOf="ValuteName"
+                                   FontSize="15" Text="{Binding CharCode}"/>
+                    </RelativePanel>
+                                                  
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
