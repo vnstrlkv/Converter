@@ -13,17 +13,17 @@ namespace Converter.ViewModel
 {
     public class ExchangeRateVM : INotifyPropertyChanged
     {
-        private CBRDaily allValutes;
-        private Exchange leftExchange;
-        private Exchange rightExchange;
-        private double leftMoney;
+        private CBRDaily allValutes; //тут хранятся все курсы валют
+        private Valute leftValute; // левая валюта
+        private Valute rightValute; // правая валюта
+        private double leftMoney; // 
         private double rightMoney;
-        private bool flag;
-        private Valute selectedValute;
-        private string leftOrRight;
-        public ICommand LeftClickCommand;
-        public ICommand RightClickCommand;
-        public static async Task<ExchangeRateVM> Create()
+        private bool flag; // используется для исключения зацикливания и ошибки переполнения при подсчете курса
+        private Valute selectedValute; // выбранная валюта
+        private string leftOrRight; // указаталь не то, с какой стороны менять тип валюта
+        public ICommand LeftClickCommand; // команда для смены левой валюты
+        public ICommand RightClickCommand;// команда для сменя правой валюты
+        public static async Task<ExchangeRateVM> Create() // Чтобы получить не блокировался интерфейс при получении курса валют, делаем асинхронный конструктор
         {
             var myClass = new ExchangeRateVM();
             await myClass.Initialize();
@@ -33,17 +33,16 @@ namespace Converter.ViewModel
         {
            
         }
-        private async Task Initialize()
+        private async Task Initialize() // задаем первоначальные параметры
         {
-            await Task.Delay(3000); // Do whatever asynchronous work you need to do
+            await Task.Delay(1000); //Ожидание, чтобы покрутился экран заставки
             allValutes = new CBRDaily();
-            allValutes = await allValutes.GetValutes();
-            flag = true;
+            allValutes = await allValutes.GetValutes(); // загружаем курс валют
+            flag = true; 
             leftOrRight = "";
 
-            LeftClickCommand = new RelayCommand(() =>
+            LeftClickCommand = new RelayCommand(() => // если происходит выбор смены левой валюты, то "указатель" на валюту меняем соответвественно
             {
-
                 leftOrRight = "L";
             });
             RightClickCommand = new RelayCommand(() =>
@@ -52,52 +51,52 @@ namespace Converter.ViewModel
                 leftOrRight = "R";
             });
 
-            leftExchange = new Exchange { Amount = 1, Name = Valutes["RUB"].Name, Rate = Valutes["RUB"].Value, Nominal = Valutes["RUB"].Nominal };
-            rightExchange = new Exchange { Amount = 1, Name = Valutes["USD"].Name, Rate = Valutes["USD"].Value, Nominal = Valutes["USD"].Nominal };
+            // первоначальное отображение
+            leftValute = allValutes.Valute["RUB"]; 
+            rightValute = allValutes.Valute["USD"];
 
         }
 
 
-        public Exchange LeftExchange
+        public Valute LeftValute
         {
             get
             {
-                return leftExchange;
+                return leftValute;
             }
             set
             {
-                leftExchange = value;
-                OnPropertyChanged("LeftExchange");
+                leftValute = value;
+                OnPropertyChanged("LeftValute");
             }
         }
 
-        public Exchange RightExchange
+        public Valute RightValute
         {
             get
             {
-                return rightExchange;
+                return rightValute;
             }
             set
             {
-                rightExchange = value;
-                OnPropertyChanged("RightExchange");
+                rightValute = value;
+                OnPropertyChanged("RightValute");
             }
         }
 
         public double LeftMoney
         {
             get {             
-                return Math.Round(leftMoney);
+                return Math.Round(leftMoney,3);
                 }
 
-            set {
-              
-                    LeftExchange.Amount = value;
-                    leftMoney = value;
+            set {              
+                   // подсчет денег с левой стороны обмена валют
+                    leftMoney = value; 
                     if (flag)
                     {
                         flag = false;
-                        RightMoney = (LeftExchange.Amount) * (LeftExchange.Rate / LeftExchange.Nominal) / (RightExchange.Rate / RightExchange.Nominal);
+                        RightMoney = (LeftMoney) * (LeftValute.Value / LeftValute.Nominal) / (RightValute.Value / RightValute.Nominal);
                         flag = true;
                     }
                     OnPropertyChanged("LeftMoney");
@@ -113,15 +112,13 @@ namespace Converter.ViewModel
             }
             set
             {
-              
-                   
-                    RightExchange.Amount = value;
-                    rightMoney = value;
+                // подсчет денег с правой стороны обмена валют                      
+                rightMoney = value;
                 if (flag)
                 {
                     flag = false;                   
                         
-                    LeftMoney = (RightExchange.Amount) *  (RightExchange.Rate / RightExchange.Nominal)/ (LeftExchange.Rate / LeftExchange.Nominal);  
+                    LeftMoney = (RightMoney) *  (RightValute.Value / RightValute.Nominal)/ (LeftValute.Value / LeftValute.Nominal);  
                     
                     flag = true;
                 }
@@ -129,7 +126,7 @@ namespace Converter.ViewModel
             }
         }
 
-        public Valute SelectedValute
+        public Valute SelectedValute 
         {
             get
             {
@@ -137,27 +134,24 @@ namespace Converter.ViewModel
             }
             set
             {
+                //логика выбора валюты
                 selectedValute = value;  
-                if(LeftOrRight=="L")
+                if(LeftOrRight=="L") 
                 {
-                    LeftExchange.Name = selectedValute.Name;
-                    LeftExchange.Nominal = SelectedValute.Nominal;
-                    LeftExchange.Rate = SelectedValute.Value;
+                    LeftValute = value;
                     LeftMoney=LeftMoney;
                 }
                 else if(LeftOrRight=="R")
                 {
-                    RightExchange.Name = selectedValute.Name;
-                    RightExchange.Nominal = SelectedValute.Nominal;
-                    RightExchange.Rate = SelectedValute.Value;
+                    RightValute = value;
                     RightMoney = RightMoney;
                     
                 }
-                selectedValute = null;
+                selectedValute = null; // обнуляем выбранную валюту, чтобы не было привязки при повторном открытии
             }
         }
         
-        public Dictionary<string, Valute> Valutes
+        public Dictionary<string, Valute> Valutes 
             {
                 get { return allValutes.Valute; }            
             }
@@ -166,8 +160,8 @@ namespace Converter.ViewModel
         {
             get { return leftOrRight; }
         }
-        
 
+        // реализация интерфейса INotifyPropertyChanged 
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {

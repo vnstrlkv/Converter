@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.UI.Xaml.Data;
 
 namespace Converter.Helpers
 {
-    internal class DoubleFormatter : IValueConverter
+    internal class DoubleFormatter : IValueConverter // вспомогательный класс для конвертации и отслеживания вводимых символов
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {

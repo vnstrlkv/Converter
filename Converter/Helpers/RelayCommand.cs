@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace Converter.Helpers
 {
-    public class RelayCommand : ICommand
+    public class RelayCommand : ICommand // вспомогательный класс для привязки команд
     {
         private readonly Action _execute;
         private readonly Func<bool> _canExecute;

@@ -1,8 +1,5 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Net.Http;
 using Newtonsoft.Json;
@@ -17,7 +14,7 @@ namespace Converter.Model
         public DateTimeOffset Timestamp { get; set; }
         public Dictionary<string, Valute> Valute { get; set; }
 
-       async public Task<CBRDaily> GetValutes()
+       async public Task<CBRDaily> GetValutes() // Получение актуального курса валют  с сайта ЦБРФ
         { 
             var requestUri = "https://www.cbr-xml-daily.ru/daily_json.js";
 
@@ -31,7 +28,7 @@ namespace Converter.Model
                 }
             }
             var valutes = JsonConvert.DeserializeObject<CBRDaily>(json);
-            valutes.Valute.Add("RUB", new Valute { Name = "Российский рубль", Value = 1, Nominal = 1, CharCode="RUB"});
+            valutes.Valute.Add("RUB", new Valute { Name = "Российский рубль", Value = 1, Nominal = 1, CharCode="RUB"}); // так как в списке нет рублей, добавляем его
             return valutes;
         }
     }
